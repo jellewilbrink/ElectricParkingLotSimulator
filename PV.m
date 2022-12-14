@@ -1,4 +1,4 @@
-classdef PV
+classdef PV < handle
     % Class modelling the behavior of Photo Voltaic (PV) panels.
     % Load the generated power from a csv file containing time and power.
     properties
@@ -7,7 +7,7 @@ classdef PV
 
     properties(Access=private)
         Pt % Table containing generated power for each timestep
-        t= timeofday(datetime("now")) % Current simulation time.
+        t= timeofday(datetime("yesterday")) % Current simulation time.
     end
 
     methods
@@ -32,8 +32,7 @@ classdef PV
             
             filt = obj.Pt.t <= obj.t;
             [~,filt_t] = max(obj.Pt.t(filt));
-            obj.P = obj.Pt.P(filt_t)
-            
+            obj.P = obj.Pt.P(filt_t);
         end        
 
     end
