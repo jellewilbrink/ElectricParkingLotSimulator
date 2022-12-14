@@ -6,7 +6,7 @@ classdef DriveEV < handle
 
     properties(Access=private)
         ev_table % Table containing EV charging data
-        t= timeofday(datetime("yesterday")) % Current simulation time.
+        t= timeofday(datetime("yesterday")) % Current simulation time. Initially 00:00:00
     end
 
     methods
