@@ -1,4 +1,4 @@
-classdef transformer < handle
+classdef Transformer < handle
     %UNTITLED Summary of this class goes here
     %   This class represents the transformer with all of its variables 
     %   and functions 
@@ -9,11 +9,11 @@ classdef transformer < handle
     end
     
     methods
-        function obj = transformer(pmax, power)
+        function obj = Transformer(pmax)
             %UNTITLED Construct an instance of this class
             %   Detailed explanation goes here
             obj.pmax = pmax;
-            obj.power = power;
+            obj.power = 0;
         end
     end
 end
