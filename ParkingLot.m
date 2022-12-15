@@ -23,6 +23,18 @@ classdef ParkingLot < handle
 
         function advance_time_to(obj, t)
             % Update time to t. TODO
+            obj.pv.advance_time_to(t);
+
+            total_charging=0;
+            for i = 1:numel(obj.chargers)
+                obj.chargers(i).update(t, obj.chargers(i).pcontrolled);
+                total_charging = total_charging + obj.chargers(i).pcontrolled; % FIXME: TODO: should be the current power use of the chargers.
+            end
+            
+            
+            obj.trafo.power = obj.pv.P + total_charging;
+
+            obj.t = t;
         end
 
         function found_space = add_EV(obj,ev)
