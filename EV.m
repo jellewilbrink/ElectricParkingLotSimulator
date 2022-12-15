@@ -6,8 +6,8 @@ classdef EV < handle
         pmax {mustBeNumeric}
         capacity {mustBeNumeric}
         sum_of_charge {mustBeNumeric}
-        arrival_time {mustBeNumeric}
-        departure_time {mustBeNumeric}
+        arrival_time
+        departure_time 
         desired_charge {mustBeNumeric}
         initial_charge {mustBeNumeric}
     end

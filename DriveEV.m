@@ -32,8 +32,14 @@ classdef DriveEV < handle
             % Search for any EVs arrived between the last time and updated
             % time
             filt = obj.ev_table.t_arrival >obj.t & obj.ev_table.t_arrival <= t;
-            arrived_EVs = obj.ev_table(filt,["t_arrival", "t_departure","total_energy"]);
-
+            arrived_EVs_table = obj.ev_table(filt,["t_arrival", "t_departure","total_energy"]);
+            
+            
+            rows = height(arrived_EVs_table); 
+            for row = 1:rows
+                    arrived_EVs_table(row,"total_energy")
+                arrived_EVs(row) = EV(22000,75000,1500,arrived_EVs_table{row,"t_arrival"},arrived_EVs_table{row,"t_departure"},arrived_EVs_table{row,"total_energy"});
+            end
 
             % Update the time
             obj.t = t;            
@@ -53,8 +59,5 @@ classdef DriveEV < handle
             filt = ismember(obj.ev_table.EV_id, ids);
             obj.ev_table = obj.ev_table(filt,:);
         end
-            
-
     end
-
 end
