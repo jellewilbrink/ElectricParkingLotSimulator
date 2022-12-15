@@ -35,8 +35,12 @@ classdef charger < handle
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             if time > obj.old_time
-                if obj.hasEV(time)
-                    obj.ev.charge(max([obj.pcontrolled obj.pmin]), time - obj.old_time);
+                if obj.hasEV(time) && size(obj.pcontrolled_history,2) >= 3
+                    obj.ev.charge(max([obj.pmin, obj.pcontrolled_history(time - 2)]), time - obj.old_time);
+%                     obj.ev.charge(max([obj.pcontrolled obj.pmin]), time - obj.old_time);
+                    obj.old_time = time;
+                elseif obj.hasEV(time)
+                    obj.ev.charge(obj.pmax, time - obj.old_time);
                     obj.old_time = time;
                 end
             end

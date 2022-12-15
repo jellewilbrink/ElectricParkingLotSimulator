@@ -12,7 +12,7 @@ classdef EV < handle
         initial_charge {mustBeNumeric}
     end
     
-    methods
+   methods
         function obj = EV(pmax,capacity, sum_of_charge, arrival_time, departure_time, desired_charge)
             %EV Construct an instance of this class
             %   Detailed explanation goes here
