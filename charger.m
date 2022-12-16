@@ -1,14 +1,17 @@
 classdef charger < handle
     %CHARGER Summary of this class goes here
     %   Detailed explanation goes here
-    properties
-        ev;
-        pmax {mustBeNumeric}
-        pcontrolled {mustBeNumeric}
+    
+    properties(Access = private)
         pmin {mustBeNumeric}
         pcontrolled_history {mustBeNumeric} = []
-        
-        old_time {mustBeNumeric}
+        pmax {mustBeNumeric}
+        pcontrolled {mustBeNumeric}
+        time = 0
+    end
+    
+    properties
+        ev;        
     end
     
     methods
@@ -22,38 +25,38 @@ classdef charger < handle
             obj.pcontrolled_history = pcontrolled_history;
         end
         
-        function update(obj, time, pcontrolled)
+        function update(obj, pcontrolled)
             obj.pcontrolled = pcontrolled;
+            obj.time = obj.time + 1;
             obj.pcontrolled_history = [obj.pcontrolled_history obj.pcontrolled];
-            if obj.hasEV(time)
-                obj.charge(time);
+            if obj.hasEV()
+                obj.charge();
             end
         end
         
         
-        function obj = charge(obj, time)
+        function obj = charge(obj)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            if time > obj.old_time
-                if obj.hasEV(time) && size(obj.pcontrolled_history,2) >= 3
-                    obj.ev.charge(max([obj.pmin, obj.pcontrolled_history(time - 2)]), time - obj.old_time);
+%             if time > obj.old_time
+            if obj.hasEV() && numel(obj.pcontrolled_history) >= 3
+%                 obj.ev.charge(max([obj.pmin, obj.pcontrolled_history(time - 2)]), time - obj.old_time);
+                obj.ev.charge(max([obj.pmin, obj.pcontrolled_history(obj.time - 2)]));
 %                     obj.ev.charge(max([obj.pcontrolled obj.pmin]), time - obj.old_time);
-                    obj.old_time = time;
-                elseif obj.hasEV(time)
-                    obj.ev.charge(obj.pmax, time - obj.old_time);
-                    obj.old_time = time;
-                end
+            elseif obj.hasEV()
+                obj.ev.charge(obj.pmax);
             end
+%             end
         end
         
         function obj = addEV(obj, e) % adds EV e to charger
             obj.ev = e;
-            obj.old_time = obj.ev.arrival_time;
+            obj.time = obj.ev.arrival_time;
         end
         
-        function result = hasEV(obj, time)
+        function result = hasEV(obj)
             if ~isempty(obj.ev) 
-                if ~obj.ev.leave(time)
+                if ~obj.ev.leave()
                     result = 1; 
                 else
                     obj.ev = [];

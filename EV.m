@@ -2,7 +2,7 @@ classdef EV < handle
     %EV Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties
+    properties(Access=private)
         pmax {mustBeNumeric}
         capacity {mustBeNumeric}
         sum_of_charge {mustBeNumeric}
@@ -10,6 +10,7 @@ classdef EV < handle
         departure_time 
         desired_charge {mustBeNumeric}
         initial_charge {mustBeNumeric}
+        time = 0
     end
     
    methods
@@ -32,8 +33,9 @@ classdef EV < handle
 %         end
        
         % sets new SoC based on time in s and delivered power
-        function obj = charge(obj, power, time)
-            obj.sum_of_charge = min([(obj.sum_of_charge + power * time) obj.desired_charge + obj.initial_charge obj.capacity]);
+        function obj = charge(obj, power)
+            obj.sum_of_charge = min([(obj.sum_of_charge + power/3600) obj.desired_charge + obj.initial_charge obj.capacity]);
+            obj.time = obj.time + 1;
             %obj.sum_of_charge = obj.sum_of_charge + power * time;
         end
         
@@ -45,8 +47,8 @@ classdef EV < handle
             end
         end
         
-        function leave = leave(obj, time)
-            if obj.departure_time <= time
+        function leave = leave(obj)
+            if obj.departure_time <= obj.time
                 leave = true;
             else
                 leave = false;                
