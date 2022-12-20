@@ -1,9 +1,6 @@
 classdef DriveEV < handle
     % Class modelling the behavior of Photo Voltaic (PV) panels.
     % Load the generated power from a csv file containing time and power.
-    properties
-    end
-
     properties(Access=private)
         ev_table % Table containing EV charging data
         t= timeofday(datetime("yesterday")) % Current simulation time. Initially 00:00:00
