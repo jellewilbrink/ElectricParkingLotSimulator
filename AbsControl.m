@@ -1,22 +1,41 @@
-function [Pcharger] = AbsControl(Ptarget,Ptrafo,Pprev, N)
-%AbsControl Controlling the chargers in absolute steps
-%Input:
-%	Ptarget	= the wanted value for Ptrafo
-%	Ptrafo	= the power at the trafo (power consumed by EV - power produced by PV)
-%	Pprev	= previous value of Pcharger
-%	N		= the number of chargers
-%Output:
-%	Pcharger = The power for each charger. This is an N-length vector, because
-%	in FCFS chargers will get different power.
-deadband = 0.05; % dead band in percent
-Prest = (1-deadband) * Ptarget; % restoration power limit
+classdef AbsControl < handle
+% AbsControl Controlling the chargers in absolute steps
 
-if (Ptrafo <= Ptarget) && (Ptrafo > Ptarget * Prest)
-	% Prevents the Pcharger from constantly updating with only small
-	% changes
-	Pcharger = Pprev;
-else
-	% If all chargers will use Pev than the Ptarget will be reached 
-	Pcharger = Pprev + ones([1 N])*(Ptarget - Ptrafo)/N;		
+    properties
+        Pmax    %	Pmax	= power limit of the trafo
+        Ptarget %	Ptarget	= the wanted value for Ptrafo
+        Prest   %   Prest   = restoration power
+        N       %	N		= the number of chargers
+    end
+
+    properties(Access=private)
+        Pprev   %	Pprev	= previous value of Pcharger
+    end
+
+    methods
+        function obj = AbsControl(Pmax, Ptarget, Prest, N)
+            obj.Pmax = Pmax;
+            obj.Ptarget = Ptarget;
+            obj.Prest = Prest;
+            obj.N = N;
+        end
+
+        function Pchargers = update(Ptrafo, Pchargers)
+            % Input:
+            %   Ptrafo	= the power at the trafo (power consumed by EV - power produced by PV)
+            %   Pchargers = Vector with the power draw of each charger. 
+            % Output:
+            %	Pchargers = The power for each charger. This is an N-length vector, because
+            %	in FCFS chargers will get different power.
+    
+            if (Ptrafo >= obj.Pmax) && (Ptrafo < obj.Prest)
+	            % If all chargers will use Pev than the Ptarget will be reached 
+	            Pchargers = Pchargers + (obj.Ptarget - Ptrafo)/obj.N;		
+            end
+        end
+    end
+
 end
-end
+
+
+
