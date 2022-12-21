@@ -9,7 +9,6 @@ classdef FCFSController < handle
     methods
         function obj = FCFSController(Pmax, Pcharge_min)
            % FCFSController: contruct FCFSController object
-
            obj.Pmax=Pmax;
            obj.Pcharge_min = Pcharge_min;          
         end
