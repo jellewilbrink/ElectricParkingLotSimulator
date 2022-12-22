@@ -31,11 +31,11 @@ classdef GSController < handle
             %   Pchargers: array of the maximum allowed power for each
             %   charger, based on the control algorithm
 
-            % update phi
-            if Ptrafo > obj.Pmax
+            % update phi and keep it between 0 and 1
+            if Ptrafo > obj.Pmax &&obj.phi > 0
                 obj.phi = obj.phi - obj.step_size;
-            elseif Ptrafo < obj.Prest
-                obj.phi = obj.phi - obj.step_size;
+            elseif Ptrafo < obj.Prest && obj.phi < 1
+                obj.phi = obj.phi + obj.step_size;
             end
             
             phi = obj.phi;

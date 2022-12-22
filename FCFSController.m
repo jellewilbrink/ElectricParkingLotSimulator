@@ -1,5 +1,5 @@
 classdef FCFSController < handle
-    % GSController Implement a controller based on First-Come First-Served algorithm.
+    % FSFCController Implement a controller based on First-Come First-Served algorithm.
     properties
         Pmax        % Maximum power allowed, i.e. power limit, in W
         Prest       % Restoration power in W
