@@ -40,9 +40,7 @@ classdef GSController < handle
             
             phi = obj.phi;
 
-            for i = 1:length(Pmax_chargers)
-                Pchargers = obj.phi .* Pmax_chargers;
-            end
+            Pchargers = obj.phi .* Pmax_chargers;
         end
     end
 end
