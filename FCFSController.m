@@ -4,16 +4,18 @@ classdef FCFSController < handle
         Pmax        % Maximum power allowed, i.e. power limit, in W
         Prest       % Restoration power in W
         Pcharge_min % Minimum charging power in W
+		Pcharge_max	% Maximum charging power in W
     end
 
     methods
-        function obj = FCFSController(Pmax, Pcharge_min)
+        function obj = FCFSController(Pmax, Pcharge_min, Pcharge_max)
            % FCFSController: contruct FCFSController object
            obj.Pmax=Pmax;
-           obj.Pcharge_min = Pcharge_min;          
+           obj.Pcharge_min = Pcharge_min;
+		   obj.Pcharge_max = Pcharge_max;
         end
 
-        function Pchargers = update(obj, Ptrafo, charger_readings)
+        function [Pchargers,delta] = update(obj, Ptrafo, charger_readings)
             % update: update the FCFS controller state.
             % Input:
             %   Ptrafo: current power of the transformer in W
@@ -38,20 +40,21 @@ classdef FCFSController < handle
             % Note: NaN goes to the last entries, which is desired
             charger_readings = sortrows(charger_readings, "arrival_time", "descend");
 
-            % Update charger power
+            % Update charger power 
+			% (ATM only possible to give chargers less power and not more)
             for row = 1:size(charger_readings,1)           
-                if charger_readings.p >= obj.Pcharge_min + delta
-                    charger_readings.p = charger_readings.p - delta;
+                if charger_readings.p(row) >= obj.Pcharge_min + delta
+                    charger_readings.p(row) = charger_readings.p(row) - delta;
                     delta = 0;
                     break;
-                else
-                     charger_readings.p = charger_readings.p - (delta - obj.Pcharge_min);
-                     delta = delta - obj.Pcharge_min;
+				else
+					delta = delta - (charger_readings.p(row) - obj.Pcharge_min);	%code breaks when I swap this line with one below
+                    charger_readings.p(row) = obj.Pcharge_min;
                 end
             end
 
             if delta > 0
-                throw(MException("Controller Error","The FCFS controller cannot reduce the power to within the trafo limit..."));
+				throw(MException("Controller Error","The FCFS controller cannot reduce the power to within the trafo limit..."));
             end
 
             Pchargers = table;
