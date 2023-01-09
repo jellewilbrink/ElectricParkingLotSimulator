@@ -54,6 +54,12 @@ classdef ParkingLot < handle
 
             found_space = false;
         end
+        
+        function updatePower(obj, chargingPower)
+           for i = 1:width(chargingPower)
+               obj.chargers(i).pcontrolled = chargingPower(i);
+           end
+        end
          
     end
 end    
