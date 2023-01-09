@@ -6,16 +6,16 @@ classdef charger < handle
         pmin {mustBeNumeric}
         pcontrolled_history {mustBeNumeric} = []
         pmax {mustBeNumeric}
-        pcontrolled {mustBeNumeric}
         time = 0
     end
     
     properties
         ev;        
+        pcontrolled {mustBeNumeric}
+        p {mustBeNumeric}
     end
     
     methods
-        % constructor
         function obj = charger(pmax, pcontrolled, pmin, pcontrolled_history)
             %CHARGER Construct an instance of this class
             %   Detailed explanation goes here
@@ -25,28 +25,37 @@ classdef charger < handle
             obj.pcontrolled_history = pcontrolled_history;
         end
         
-        function update(obj, pcontrolled)
+        function update(obj, time, pcontrolled)
+            %update update all the parameters of the charger (pcontrolled, time and history)
+            %Input:
+            %	pcontrolled - controlled power from parkingLot
+            %Output:
+            %	-
             obj.pcontrolled = pcontrolled;
-            obj.time = obj.time + 1;
+%             obj.time = obj.time + 1;
+            obj.time = time;
             obj.pcontrolled_history = [obj.pcontrolled_history obj.pcontrolled];
             if obj.hasEV()
+                obj.ev.setTime(time);
                 obj.charge();
+            else
+                obj.p = 0;
             end
         end
         
         
         function obj = charge(obj)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-%             if time > obj.old_time
+            %charge charge the ev object connected to charger
+            %Input:
+            %	-
+            %Output:
+            %	-
             if obj.hasEV() && numel(obj.pcontrolled_history) >= 3
-%                 obj.ev.charge(max([obj.pmin, obj.pcontrolled_history(time - 2)]), time - obj.old_time);
-                obj.ev.charge(max([obj.pmin, obj.pcontrolled_history(obj.time - 2)]));
-%                     obj.ev.charge(max([obj.pcontrolled obj.pmin]), time - obj.old_time);
+                obj.p = obj.ev.charge(max([obj.pmin, ...
+                    obj.pcontrolled_history(width(obj.pcontrolled_history) - 2)]));
             elseif obj.hasEV()
                 obj.ev.charge(obj.pmax);
             end
-%             end
         end
         
         function obj = addEV(obj, e) % adds EV e to charger
@@ -55,11 +64,11 @@ classdef charger < handle
         end
         
         function result = hasEV(obj)
-            if ~isempty(obj.ev) 
+            if ~isempty(obj.ev) && isvalid(obj.ev)
                 if ~obj.ev.leave()
                     result = 1; 
                 else
-                    obj.ev = [];
+                    delete(obj.ev);
                     result = 0;
                 end
             else

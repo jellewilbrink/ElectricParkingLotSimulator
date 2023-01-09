@@ -2,15 +2,20 @@ classdef EV < handle
     %EV Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties(Access=private)
+    properties
+        arrival_time
+    end
+    
+%     properties(Access=private)
+    properties
         pmax {mustBeNumeric}
         capacity {mustBeNumeric}
         sum_of_charge {mustBeNumeric}
-        arrival_time
         departure_time 
         desired_charge {mustBeNumeric}
         initial_charge {mustBeNumeric}
         time = 0
+        soc_hist
     end
     
    methods
@@ -24,6 +29,8 @@ classdef EV < handle
             obj.departure_time = departure_time;
             obj.desired_charge = desired_charge;
             obj.initial_charge = sum_of_charge;
+            obj.time = obj.arrival_time;
+            obj.soc_hist = [];
         end
        
 %         function update(obj, power, time)
@@ -33,9 +40,16 @@ classdef EV < handle
 %         end
        
         % sets new SoC based on time in s and delivered power
-        function obj = charge(obj, power)
-            obj.sum_of_charge = min([(obj.sum_of_charge + power/3600) obj.desired_charge + obj.initial_charge obj.capacity]);
-            obj.time = obj.time + 1;
+        function Pcharged = charge(obj, power)
+            power = min([obj.pmax, power]);
+            old_sum = obj.sum_of_charge;
+            obj.sum_of_charge = min([(obj.sum_of_charge + power/3600) ...
+                (obj.desired_charge + obj.initial_charge) ...
+                obj.capacity]);
+            
+            obj.time = obj.time + seconds(1);
+            Pcharged = (obj.sum_of_charge - old_sum) * 3600;
+            obj.soc_hist = [obj.soc_hist obj.sum_of_charge];
             %obj.sum_of_charge = obj.sum_of_charge + power * time;
         end
         
@@ -53,6 +67,10 @@ classdef EV < handle
             else
                 leave = false;                
             end
+        end
+        
+        function setTime(obj, time)
+            obj.time = time;
         end
     end
 end

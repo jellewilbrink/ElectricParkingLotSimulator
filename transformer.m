@@ -9,11 +9,11 @@ classdef Transformer < handle
     end
     
     methods
-        function obj = Transformer(pmax)
+        function obj = Transformer(pmax, power)
             %UNTITLED Construct an instance of this class
             %   Detailed explanation goes here
             obj.pmax = pmax;
-            obj.power = 0;
+            obj.power = power;
         end
     end
 end

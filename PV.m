@@ -21,7 +21,10 @@ classdef PV < handle
             obj.Pt = readtable(csv_in);
             obj.Pt = renamevars(obj.Pt,["Time","devices_mean"],["dt","P"]);
             obj.Pt.dt = datetime(obj.Pt.dt, "Format","dd/MM/uuuu HH:mm:ss");
-            [obj.Pt.t, obj.Pt.d] = timeofday(obj.Pt.dt);
+            obj.Pt.t = timeofday(obj.Pt.dt);
+            obj.Pt.d = obj.Pt.dt;
+            obj.Pt.d.Format = 'yyyy-MM-dd';
+%             [obj.Pt.t, obj.Pt.d] = timeofday(obj.Pt.dt);
         end
 
         function advance_time_to(obj, t)

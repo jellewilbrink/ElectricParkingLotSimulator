@@ -4,6 +4,7 @@ classdef ParkingLot < handle
         trafo
         chargers
         pv
+        test
     end
 
     properties(Access=private)
@@ -12,7 +13,7 @@ classdef ParkingLot < handle
 
     methods
         function obj = ParkingLot(trafo_pmax, csv_pv, num_chargers)
-            obj.trafo = Transformer(trafo_pmax);
+            obj.trafo = Transformer(trafo_pmax, 0);
             obj.pv = PV(csv_pv);
             obj.chargers= [charger(22000,22000,7000,[]) charger(22000,22000,7000,[])];
             
@@ -28,12 +29,13 @@ classdef ParkingLot < handle
             total_charging=0;
             for i = 1:numel(obj.chargers)
                 obj.chargers(i).update(t, obj.chargers(i).pcontrolled);
-                total_charging = total_charging + obj.chargers(i).pcontrolled; % FIXME: TODO: should be the current power use of the chargers.
+%                 total_charging = total_charging + obj.chargers(i).pcontrolled; % FIXME: TODO: should be the current power use of the chargers.
+                    total_charging = total_charging + obj.chargers(i).p; % FIXME: TODO: should be the current power use of the chargers.
             end
             
             
             obj.trafo.power = obj.pv.P + total_charging;
-
+            obj.test = total_charging;
             obj.t = t;
         end
 
@@ -42,7 +44,7 @@ classdef ParkingLot < handle
             % Returns false if no space is available for the EV, else true.
 
             for i = 1:numel(obj.chargers)
-                if ~obj.chargers(i).hasEV(obj.t)
+                if ~obj.chargers(i).hasEV()
                     obj.chargers(i).addEV(ev);
 
                     found_space = true;
