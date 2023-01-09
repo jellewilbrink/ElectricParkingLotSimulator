@@ -31,10 +31,7 @@ classdef FCFSController < handle
             %       the control algorithm
 
             % Update step
-            delta = 0;
-            if Ptrafo > obj.Pmax
-                delta = Ptrafo - obj.Pmax;
-            end
+			delta = Ptrafo - obj.Pmax;
 
             % Sort the chargers, most recently connected EV in first row
             % Note: NaN goes to the last entries, which is desired
@@ -42,20 +39,37 @@ classdef FCFSController < handle
 
             % Update charger power 
 			% (ATM only possible to give chargers less power and not more)
-            for row = 1:size(charger_readings,1)           
-                if charger_readings.p(row) >= obj.Pcharge_min + delta
-                    charger_readings.p(row) = charger_readings.p(row) - delta;
-                    delta = 0;
-                    break;
-				else
-					delta = delta - (charger_readings.p(row) - obj.Pcharge_min);	%code breaks when I swap this line with one below
-                    charger_readings.p(row) = obj.Pcharge_min;
-                end
-            end
-
-            if delta > 0
-				throw(MException("Controller Error","The FCFS controller cannot reduce the power to within the trafo limit..."));
-            end
+			if delta > 0		% The trafo is going over limit, so we should charge less 
+				for row = 1:size(charger_readings,2)           
+                	if charger_readings.p(row) >= obj.Pcharge_min + delta
+                    	charger_readings.p(row) = charger_readings.p(row) - delta;
+                    	delta = 0;
+                    	break;
+					else
+						delta = delta - (charger_readings.p(row) - obj.Pcharge_min);	%code breaks when I swap this line with one below
+                    	charger_readings.p(row) = obj.Pcharge_min;
+                	end
+				end
+				for row = 1:size(charger_readings,2)	%lower to zero if lowering to minimum is not enough 
+                	if delta < 0
+						break
+					else
+						delta = delta - charger_readings.p(row);	%code breaks when I swap this line with one below
+                    	charger_readings.p(row) = 0;
+                	end
+				end
+			elseif delta < 0	% The EVs can be charged with more power
+				for row = size(charger_readings,2):-1:1    % The EV that arrived first gets it P increased first       
+                	if charger_readings.p(row) <=  delta + obj.Pcharge_max
+                    	charger_readings.p(row) = charger_readings.p(row) - delta;
+                    	delta = 0;
+                    	break;
+					else
+						delta = delta + (obj.Pcharge_max - charger_readings.p(row));	%code breaks when I swap this line with one below
+                    	charger_readings.p(row) = obj.Pcharge_max;
+                	end
+				end
+			end
 
             Pchargers = table;
             Pchargers.id = charger_readings.id;
