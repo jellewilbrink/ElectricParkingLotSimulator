@@ -15,6 +15,10 @@ function simulator(controller_type)
         elseif controller_type == "FCFSController"
 %             Pmax, Pcharge_min, Pcharge_max
             controller = FCFSController(Ptarget, 7000, 22000);
+        else
+            ME = MException('InputError:Controller', ...
+            'An invalid controller called %s was given... Please input a valid controller.', controller_type);
+            throw(ME)
         end
     
 %% add DriveEV and ParkingLot instances
