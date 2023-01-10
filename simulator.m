@@ -1,9 +1,13 @@
 function simulator(controller_type)
 %     ParkingLot(trafo_pmax, csv_pv, num_chargers)
+tic
 %% set parameters
         Ptarget = 80000;
         Ptrafo = 100000;
         Prest = 1000;
+        Pc_min = 7000;
+        Pc_max = 22000;
+        GS_step = 0.05;
         NumChargers = 10;
 %% create controller
         if controller_type == "AbsControl"
@@ -11,10 +15,10 @@ function simulator(controller_type)
 %             Power = AbsControl(1000,900,100, 10);
         elseif controller_type == "GSController"
 %             Pmax, Prest, step_size, N
-            controller = GSController(Ptarget,Prest, 0.1, NumChargers);
+            controller = GSController(Ptarget,Prest, GS_step, NumChargers);
         elseif controller_type == "FCFSController"
 %             Pmax, Pcharge_min, Pcharge_max
-            controller = FCFSController(Ptarget, 7000, 22000);
+            controller = FCFSController(Ptarget, Pc_min, Pc_max);
         elseif controller_type ~= "None"
             ME = MException('InputError:Controller', ...
             'An invalid controller called %s was given... Please input a valid controller.', controller_type);
@@ -36,7 +40,8 @@ function simulator(controller_type)
     delta_history = [];
     time_history = datetime('yesterday');
 %% perform simulation
-    for i = 1:numel(data(:,1))
+    for i = 1:65375
+%     for i = 1:numel(data(:,1))
         % get current time and power
         curr_time = data(i,1).Time;
         curr_power = data(i,2).devices_mean;
@@ -80,13 +85,13 @@ function simulator(controller_type)
         
         
 %% save data
-        trafo_history = [trafo_history Ptrafo];
-        time_history = [time_history curr_time];
-        pvdata = [pvdata p.pv.P];
-        chargingdata = [chargingdata p.test];
+        trafo_history = [trafo_history Ptrafo]; % Pchargers + PV
+        time_history = [time_history curr_time]; % time
+        pvdata = [pvdata p.pv.P];   % PV
+        chargingdata = [chargingdata p.test]; % Pchargers
         
         
     end
     
-
+toc
 end
