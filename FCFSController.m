@@ -43,14 +43,15 @@ classdef FCFSController < handle
                     	Pchargers(i) = obj.Pcharge_min;
                 	end
 				end
-				for i = 1:numel(Pchargers)	%lower to zero if lowering to minimum is not enough 
-                	if delta < 0
-						break
-					else
-						delta = delta - Pchargers(i);	%code breaks when I swap this line with one below
-                    	Pchargers(i) = 0;
-                	end
-				end
+% Commented code is for when you want to be able to charge below Pcharge_min				
+%				for i = 1:numel(Pchargers)	%lower to zero if lowering to minimum is not enough 
+%                	if delta < 0
+%						break
+%					else
+%						delta = delta - Pchargers(i);	%code breaks when I swap this line with one below
+%                    	Pchargers(i) = 0;
+%                	end
+%				end
 			elseif delta < 0	% The EVs can be charged with more power
 				for i = numel(Pchargers):-1:1    % The EV that arrived first gets it P increased first       
                 	if Pchargers(i) <=  delta + obj.Pcharge_max
