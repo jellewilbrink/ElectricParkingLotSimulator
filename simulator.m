@@ -1,9 +1,11 @@
 function simulator(controller_type)
 %     ParkingLot(trafo_pmax, csv_pv, num_chargers)
+%% set parameters
         Ptarget = 80000;
         Ptrafo = 100000;
         Prest = 1000;
         NumChargers = 10;
+%% create controller
         if controller_type == "AbsControl"
             controller = AbsControl(Ptarget,Ptrafo,Prest, NumChargers);
 %             Power = AbsControl(1000,900,100, 10);
@@ -14,7 +16,8 @@ function simulator(controller_type)
 %             Pmax, Pcharge_min, Pcharge_max
             controller = FCFSController(Ptarget, 7000, 22000);
         end
-
+    
+%% add DriveEV and ParkingLot instances
     dEV = DriveEV('data/BetterCars.csv');
     p = ParkingLot(Ptarget, 'data/solarPanelOutputDataSlimPark-1day.csv', 10);
     data = readtable('data/solarPanelOutputDataSlimPark-1day.csv');
@@ -25,14 +28,16 @@ function simulator(controller_type)
     trafo_history = [];
     pvdata = [];
     chargingdata = [];
+    phi_history = [];
+    delta_history = [];
     time_history = datetime('yesterday');
+%% perform simulation
     for i = 1:numel(data(:,1))
         % get current time and power
         curr_time = data(i,1).Time;
         curr_power = data(i,2).devices_mean;
         
-%         p.chargers.
-        % update parkingLot
+%% update parkingLot and newEV
         p.advance_time_to(timeofday(curr_time));
         newEV = dEV.advance_time_to(timeofday(curr_time));
         if ~isempty(newEV)
@@ -43,7 +48,7 @@ function simulator(controller_type)
                 rip = 0;
             end
         end
-        
+%% get charger data
         Pchargers = zeros(1,NumChargers);
         for j = 1:NumChargers
             if size(p.chargers(1,j).p) == 0
@@ -52,32 +57,28 @@ function simulator(controller_type)
             Pchargers(j) = p.chargers(1,j).p;
         end
         
-        Pprev = -1;
-        %update controller
+%         Pprev = -1;
+%% update controller
         Ptrafo = p.trafo.power;
         if controller_type == "AbsControl"
-%             Ptrafo, Pchargers
             Pchargers = controller.update(Ptrafo, Pchargers); % EV-PV, vector of chargers
         elseif controller_type == "GSController"
-%             Ptrafo, Pmax_chargers
-            [phi, Pchargers] = controller.update(Ptrafo, [22000, 22000, 22000, 22000, 22000, 22000, 22000, 22000, 22000, 22000]);
+            [phi, Pchargers] = controller.update(Ptrafo, [p.chargers(:).pmax]);
+            phi_history = [phi_history phi];
         elseif controller_type == "FCFSController"
-%             Ptrafo, charger_readings
             [Pchargers,delta] = controller.update(Ptrafo, Pchargers);
+            delta_history = [delta_history delta];
         end
-        for chargeIndex = 1:width(Pchargers)
-            p.chargers(chargeIndex).pcontrolled = Pchargers(chargeIndex);
-            
-        end
+        p.updatePower(Pchargers);
         
         
-        % save data
+%% save data
         trafo_history = [trafo_history Ptrafo];
         time_history = [time_history curr_time];
         pvdata = [pvdata p.pv.P];
         chargingdata = [chargingdata p.test];
-        phi_history = [phi_history phi];
-        delta_history = [delta_history delta];
+        
+        
     end
     
 

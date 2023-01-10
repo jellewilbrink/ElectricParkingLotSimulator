@@ -56,6 +56,8 @@ classdef ParkingLot < handle
         end
         
         function updatePower(obj, chargingPower)
+            %Werkt dit??!?!!!?!!?
+%             obj.chargers(:).pcontrolled = chargingPower;
            for i = 1:width(chargingPower)
                obj.chargers(i).pcontrolled = chargingPower(i);
            end

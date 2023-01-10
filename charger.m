@@ -5,7 +5,6 @@ classdef charger < handle
     properties(Access = private)
         pmin {mustBeNumeric}
         pcontrolled_history {mustBeNumeric} = []
-        pmax {mustBeNumeric}
         time = 0
     end
     
@@ -13,6 +12,7 @@ classdef charger < handle
         ev;        
         pcontrolled {mustBeNumeric}
         p {mustBeNumeric}
+        pmax {mustBeNumeric}
     end
     
     methods
