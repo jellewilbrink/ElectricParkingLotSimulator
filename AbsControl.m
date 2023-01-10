@@ -20,7 +20,7 @@ classdef AbsControl < handle
             obj.N = N;
         end
 
-        function Pchargers = update(Ptrafo, Pchargers)
+        function Pchargers = update(obj, Ptrafo, Pchargers)
             % Input:
             %   Ptrafo	= the power at the trafo (power consumed by EV - power produced by PV)
             %   Pchargers = Vector with the power draw of each charger. 
