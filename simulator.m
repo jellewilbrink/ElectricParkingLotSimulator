@@ -15,7 +15,7 @@ function simulator(controller_type)
         elseif controller_type == "FCFSController"
 %             Pmax, Pcharge_min, Pcharge_max
             controller = FCFSController(Ptarget, 7000, 22000);
-        else
+        elseif controller_type ~= "None"
             ME = MException('InputError:Controller', ...
             'An invalid controller called %s was given... Please input a valid controller.', controller_type);
             throw(ME)
@@ -53,12 +53,12 @@ function simulator(controller_type)
             end
         end
 %% get charger data
-        Pchargers = zeros(1,NumChargers);
+        Pchargers = [];
         for j = 1:NumChargers
-            if size(p.chargers(1,j).p) == 0
-                p.chargers(1,j).p = 0;
+%             if size(p.chargers(1,j).p) == 0
+            if p.chargers(1,j).hasEV()
+                Pchargers(j) = p.chargers(1,j).p;
             end
-            Pchargers(j) = p.chargers(1,j).p;
         end
         
 %         Pprev = -1;
@@ -67,13 +67,16 @@ function simulator(controller_type)
         if controller_type == "AbsControl"
             Pchargers = controller.update(Ptrafo, Pchargers); % EV-PV, vector of chargers
         elseif controller_type == "GSController"
+            p.updatePower(Pchargers);
             [phi, Pchargers] = controller.update(Ptrafo, [p.chargers(:).pmax]);
             phi_history = [phi_history phi];
+            p.updatePower(Pchargers);
         elseif controller_type == "FCFSController"
             [Pchargers,delta] = controller.update(Ptrafo, Pchargers);
             delta_history = [delta_history delta];
+            p.updatePower(Pchargers);
         end
-        p.updatePower(Pchargers);
+%         p.updatePower(Pchargers);
         
         
 %% save data
