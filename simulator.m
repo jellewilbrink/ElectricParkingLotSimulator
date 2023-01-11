@@ -1,4 +1,4 @@
-function simulator(controller_type)
+function M=simulator(controller_type)
 %     ParkingLot(trafo_pmax, csv_pv, num_chargers)
 tic
 %% set parameters
@@ -24,7 +24,8 @@ tic
             'An invalid controller called %s was given... Please input a valid controller.', controller_type);
             throw(ME)
         end
-    
+%%	Create metrics
+	M = metrics(1, Ptrafo);
 %% add DriveEV and ParkingLot instances
     dEV = DriveEV('data/BetterCars.csv');
     p = ParkingLot(Ptarget, 'data/solarPanelOutputDataSlimPark-1day.csv', 10);
@@ -85,13 +86,16 @@ tic
         
         
 %% save data
-        trafo_history = [trafo_history Ptrafo]; % Pchargers + PV
-        time_history = [time_history curr_time]; % time
-        pvdata = [pvdata p.pv.P];   % PV
-        chargingdata = [chargingdata p.test]; % Pchargers
-        
+        %trafo_history = [trafo_history Ptrafo]; % Pchargers + PV
+        %time_history = [time_history curr_time]; % time
+        %pvdata = [pvdata p.pv.P];   % PV
+        %chargingdata = [chargingdata p.test]; % Pchargers
+        M.Ptotal = Ptrafo;
+		M.time = curr_time;
+		M.PVdata = p.pv.P;
+		M.Pchargers = p.test;
         
     end
-    
+    M = M.compute;	% Compute all the metrics over the whole time frame
 toc
 end
