@@ -4,6 +4,7 @@ classdef metrics
 
 	properties
 		Pover_limit	% All instances that the trafo limit is exceeded
+		Tover_limit % Total number of samples over limit
 		Pover_limit_quadratic	% sum of the quadartic limit violation 
 		E_from_grid	% single value of Energy from the grid during simulation
 		E_to_grid	% single value of Energy to the grid during simulation
@@ -52,6 +53,7 @@ classdef metrics
 			%	(do after the loop)
 			obj.Pover_limit = obj.Ptotal - obj.Pmax_trafo;
 			obj.Pover_limit(obj.Pover_limit<0) = 0;	% Only show values that breach the limit and the rest as zero
+			obj.Tover_limit = nnz(obj.Pover_limit); % nnz = number of non-zero elements
 			obj.Pover_limit_quadratic = sum(obj.Pover_limit.^2);
 			obj.E_from_grid = sum(obj.Ptotal(obj.Ptotal>0))* obj.stepSize;		% Using the grid to charge EVs
 			obj.E_to_grid = sum(obj.Ptotal(obj.Ptotal<0)) * obj.stepSize;		% Over production of PVs is send to grid
