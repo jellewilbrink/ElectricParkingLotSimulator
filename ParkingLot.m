@@ -23,14 +23,13 @@ classdef ParkingLot < handle
         end
 
         function advance_time_to(obj, t)
-            % Update time to t. TODO
+            % Update time to t.
             obj.pv.advance_time_to(t);
 
             total_charging=0;
             for i = 1:numel(obj.chargers)
                 obj.chargers(i).update(t, obj.chargers(i).pcontrolled);
-%                 total_charging = total_charging + obj.chargers(i).pcontrolled; % FIXME: TODO: should be the current power use of the chargers.
-                    total_charging = total_charging + obj.chargers(i).p; % FIXME: TODO: should be the current power use of the chargers.
+                total_charging = total_charging + obj.chargers(i).p; 
             end
             
             
@@ -56,8 +55,6 @@ classdef ParkingLot < handle
         end
         
         function updatePower(obj, chargingPower)
-            %Werkt dit??!?!!!?!!?
-%             obj.chargers(:).pcontrolled = chargingPower;
            for i = 1:width(chargingPower)
                obj.chargers(i).pcontrolled = chargingPower(i);
            end

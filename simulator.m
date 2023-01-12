@@ -2,15 +2,23 @@ function M=simulator(controller_type)
 %     ParkingLot(trafo_pmax, csv_pv, num_chargers)
 tic
 %% set parameters
-        Ptarget = 80000;
-        Ptrafo = 100000;
-        Prest = 1000;
-        Pc_min = 7000;
-        Pc_max = 22000;
-        GS_step = 0.05;
-        NumChargers = 10;
+        % NOTE: next to the parameters below, there are also hardcoded
+        % parameters in the DriveEV.m and ParkingLot.m files. For now it is
+        % chosen to leave them there, because they can be configured once 
+        % and changing them is less interesting for the purpose of
+        % analyzing the controllers.
+        Ptrafo = 100000; % Power limit of the trafo
+        Prest =  80000;  % Restoration power for control
+        Ptarget = Prest + (Ptrafo - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
+        GS_step = 0.05; % Stepsize to change phi in GridShield controller
+        Pc_min = 7000; % Minimum charger power, If changed, also change in ParkingLot.m
+        Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m
+        NumChargers = 10; % Number of chargers.
+
+        PV_file = 'data/solarPanelOutputDataSlimPark-1day.csv'; % Path to file containing PV data
+        EV_file = 'data/BetterCars.csv'; % Path to file containing EV data
 %% create controller
-        if controller_type == "AbsControl"
+        if controller_type == "AbsController"
             controller = AbsControl(Ptarget,Ptrafo,Prest, NumChargers);
 %             Power = AbsControl(1000,900,100, 10);
         elseif controller_type == "GSController"
@@ -25,11 +33,17 @@ tic
             throw(ME)
         end
 %%	Create metrics
-	M = metrics(1, Ptrafo);
+	M = Metrics(1, Ptrafo);
 %% add DriveEV and ParkingLot instances
-    dEV = DriveEV('data/BetterCars.csv');
-    p = ParkingLot(Ptarget, 'data/solarPanelOutputDataSlimPark-1day.csv', 10);
-    data = readtable('data/solarPanelOutputDataSlimPark-1day.csv');
+   
+    dEV = DriveEV(EV_file);
+    p = ParkingLot(Ptarget, PV_file, 10);
+
+    opts = detectImportOptions(PV_file);
+    opts = setvaropts(opts,"Time",'InputFormat','MM/dd/uuuu HH:mm:ss');
+    opts.VariableNamingRule = 'modify';
+    data = readtable(PV_file, opts);
+
 %     init_time = data(1,1).Time;
 %     start_time = datetime(data(1,1).Time,"Format","uuuu/MM/dd hh:mm:ss")
 %     end_time = datetime(data(numel(data(:,1)),1).Time,"Format","uuuu/MM/dd hh:mm:ss")
@@ -41,7 +55,7 @@ tic
     delta_history = [];
     time_history = datetime('yesterday');
 %% perform simulation
-    for i = 1:65375
+    for i = 1:65375 % FIXME: REMOVE THIS LINE!!!!!!!!!!!!!!!!!!
 %     for i = 1:numel(data(:,1))
         % get current time and power
         curr_time = data(i,1).Time;

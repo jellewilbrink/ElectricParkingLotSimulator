@@ -1,4 +1,4 @@
-classdef metrics
+classdef Metrics
 	%METRICS Class to calculate and save metrics
 	%   Detailed explanation goes here
 
@@ -8,6 +8,7 @@ classdef metrics
 		Pover_limit_quadratic	% sum of the quadartic limit violation 
 		E_from_grid	% single value of Energy from the grid during simulation
 		E_to_grid	% single value of Energy to the grid during simulation
+        
 		%Input:
 		Ptotal		% vector with Power at the trafo on each time interval
 		Pmax_trafo	% the power limit of the trafo
@@ -19,7 +20,7 @@ classdef metrics
 
 	methods
 		% constructor
-		function obj = metrics(stepSize, Pmax_trafo)
+		function obj = Metrics(stepSize, Pmax_trafo)
 			%METRICS Construct an instance of this class
 			%   Detailed explanation goes here
 			obj.stepSize = stepSize;
