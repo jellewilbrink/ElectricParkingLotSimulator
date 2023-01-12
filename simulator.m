@@ -17,6 +17,7 @@ tic
 
         PV_file = 'data/solarPanelOutputDataSlimPark-1day.csv'; % Path to file containing PV data
         EV_file = 'data/BetterCars.csv'; % Path to file containing EV data
+        end_time = duration("21:00:00");
 %% create controller
         if controller_type == "AbsController"
             controller = AbsControl(Ptarget,Ptrafo,Prest, NumChargers);
@@ -55,11 +56,15 @@ tic
     delta_history = [];
     time_history = datetime('yesterday');
 %% perform simulation
-    for i = 1:65375 % FIXME: REMOVE THIS LINE!!!!!!!!!!!!!!!!!!
-%     for i = 1:numel(data(:,1))
+%     for i = 1:65375 % FIXME: REMOVE THIS LINE!!!!!!!!!!!!!!!!!!
+    for i = 1:numel(data(:,1))
         % get current time and power
         curr_time = data(i,1).Time;
         curr_power = data(i,2).devices_mean;
+
+        if timeofday(curr_time) > end_time
+            break
+        end
         
 %% update parkingLot and newEV
         p.advance_time_to(timeofday(curr_time));
@@ -100,8 +105,8 @@ tic
         
         
 %% save data
-        %trafo_history = [trafo_history Ptrafo]; % Pchargers + PV
-        %time_history = [time_history curr_time]; % time
+%         trafo_history = [trafo_history Ptrafo]; % Pchargers + PV
+%         time_history = [time_history curr_time]; % time
         %pvdata = [pvdata p.pv.P];   % PV
         %chargingdata = [chargingdata p.test]; % Pchargers
         M.Ptotal = Ptrafo;
@@ -111,5 +116,7 @@ tic
         
     end
     M = M.compute;	% Compute all the metrics over the whole time frame
+
+%     plot(time_history, trafo_history)
 toc
 end
