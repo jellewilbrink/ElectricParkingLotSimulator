@@ -1,4 +1,4 @@
-function M=simulator(controller_type)
+function M=simulator(controller_type, sweep_var)
 %     ParkingLot(trafo_pmax, csv_pv, num_chargers)
 tic
 %% set parameters
@@ -10,7 +10,7 @@ tic
         Ptrafo = 100000; % Power limit of the trafo
         Prest =  80000;  % Restoration power for control
         Ptarget = Prest + (Ptrafo - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
-        GS_step = 0.05; % Stepsize to change phi in GridShield controller
+        GS_step = sweep_var; %0.05; % Stepsize to change phi in GridShield controller
         Pc_min = 7000; % Minimum charger power, If changed, also change in ParkingLot.m
         Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m
         NumChargers = 10; % Number of chargers.
