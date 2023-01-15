@@ -5,10 +5,10 @@
 % disable annoying warning
 warning('off', 'MATLAB:table:ModifiedAndSavedVarnames')
 
-sweep = [0.01:0.03:0.1];
+sweep = [0.05];
 for j = 1:numel(sweep)
     sweep_var = sweep(j);
-    fprintf("Sweep cycle %d of %d. Sweep_var = %f", j, numel(sweep), sweep_var)
+    fprintf("Sweep cycle %d of %d. Sweep_var = %f \n", j, numel(sweep), sweep_var)
 
     % simulate controller of each type
     fprintf("Starting Abscontroller... ")
@@ -22,3 +22,16 @@ for j = 1:numel(sweep)
 end
 
 fprintf("Finished simulations...\n")
+
+
+%% Choose stepsize value by sweeping
+
+
+%% Plot results
+
+for i = 1
+    figure;
+    plot(abs(i).time,abs(i).Pover_limit/1000);
+    plot(fcfs(i).time,fcfs(i).Pover_limit/1000);
+    plot(gs(i).time,gs(i).Pover_limit/1000);
+end

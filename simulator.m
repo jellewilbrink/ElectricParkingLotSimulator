@@ -8,10 +8,10 @@ tic
         % and changing them is less interesting for the purpose of
         % analyzing the controllers.
         Ptrafo_max = 100000; % Power limit of the trafo
-        Prest =  sweep_var; % 80000;  % Restoration power for control
+        Prest =  80000;  % Restoration power for control
         Ptarget = Prest + (Ptrafo_max - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
         GS_step = 0.05; % Stepsize to change phi in GridShield controller
-        Pc_min = 7000; % Minimum charger power, If changed, also change in ParkingLot.m
+        Pc_min = sweep_var; %7000; % Minimum charger power, If changed, also change in ParkingLot.m
         Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m
         NumChargers = 10; % Number of chargers.
 
