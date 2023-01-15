@@ -7,10 +7,10 @@ tic
         % chosen to leave them there, because they can be configured once 
         % and changing them is less interesting for the purpose of
         % analyzing the controllers.
-        Ptrafo = 100000; % Power limit of the trafo
-        Prest =  80000;  % Restoration power for control
-        Ptarget = Prest + (Ptrafo - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
-        GS_step = sweep_var; %0.05; % Stepsize to change phi in GridShield controller
+        Ptrafo_max = 100000; % Power limit of the trafo
+        Prest =  sweep_var; % 80000;  % Restoration power for control
+        Ptarget = Prest + (Ptrafo_max - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
+        GS_step = 0.05; % Stepsize to change phi in GridShield controller
         Pc_min = 7000; % Minimum charger power, If changed, also change in ParkingLot.m
         Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m
         NumChargers = 10; % Number of chargers.
@@ -20,25 +20,26 @@ tic
         end_time = duration("21:00:00");
 %% create controller
         if controller_type == "AbsController"
-            controller = AbsControl(Ptarget,Ptrafo,Prest, NumChargers);
+            controller = AbsControl(Ptrafo_max,Ptarget,Prest, NumChargers);
 %             Power = AbsControl(1000,900,100, 10);
         elseif controller_type == "GSController"
 %             Pmax, Prest, step_size, N
-            controller = GSController(Ptarget,Prest, GS_step, NumChargers);
+            controller = GSController(Ptrafo_max,Prest, GS_step, NumChargers);
         elseif controller_type == "FCFSController"
 %             Pmax, Pcharge_min, Pcharge_max
-            controller = FCFSController(Ptarget, Pc_min, Pc_max);
+            controller = FCFSController(Ptrafo_max, Pc_min, Pc_max); % FIXME: Not sure about Ptarget here...
         elseif controller_type ~= "None"
             ME = MException('InputError:Controller', ...
             'An invalid controller called %s was given... Please input a valid controller.', controller_type);
             throw(ME)
         end
 %%	Create metrics
-	M = Metrics(1, Ptrafo);
+	M = Metrics(1, Ptrafo_max);
 %% add DriveEV and ParkingLot instances
    
     dEV = DriveEV(EV_file);
     p = ParkingLot(Ptarget, PV_file, 10);
+    p.set_chargers(Pc_max,Pc_max,Pc_min,NumChargers);
 
     opts = detectImportOptions(PV_file);
     opts = setvaropts(opts,"Time",'InputFormat','MM/dd/uuuu HH:mm:ss');
@@ -56,7 +57,6 @@ tic
     delta_history = [];
     time_history = datetime('yesterday');
 %% perform simulation
-%     for i = 1:65375 % FIXME: REMOVE THIS LINE!!!!!!!!!!!!!!!!!!
     for i = 1:numel(data(:,1))
         % get current time and power
         curr_time = data(i,1).Time;

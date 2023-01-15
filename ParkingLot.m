@@ -14,12 +14,10 @@ classdef ParkingLot < handle
     methods
         function obj = ParkingLot(trafo_pmax, csv_pv, num_chargers)
             obj.trafo = Transformer(trafo_pmax, 0);
-            obj.pv = PV(csv_pv);
-            obj.chargers= [charger(22000,22000,7000,[]) charger(22000,22000,7000,[])];
-            
-            for i = 1:num_chargers
-                obj.chargers(i) = charger(22000,22000,7000,[]);
-            end
+            obj.pv = PV(csv_pv);         
+
+            % Initialize chargers with default values
+            obj.set_chargers(22000,22000,7000,num_chargers)
         end
 
         function advance_time_to(obj, t)
@@ -36,6 +34,18 @@ classdef ParkingLot < handle
             obj.trafo.power = obj.pv.P + total_charging;
             obj.test = total_charging;
             obj.t = t;
+        end
+
+        function set_chargers(obj, pmax, pcontrolled, pmin, num_chargers)
+            % Initialize num_chargers chargers all with the same parameters
+
+            % Create 'empty'charger array
+            obj.chargers= [charger(22000,22000,7000,[]) charger(22000,22000,7000,[])];
+
+            % Fill with values and increase array length if needed
+            for i = 1:num_chargers
+                obj.chargers(i) = charger(pmax,pcontrolled,pmin,[]);
+            end
         end
 
         function found_space = add_EV(obj,ev)
