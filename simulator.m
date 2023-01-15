@@ -89,7 +89,7 @@ tic
 %         Pprev = -1;
 %% update controller
         Ptrafo = p.trafo.power;
-        if controller_type == "AbsControl"
+        if controller_type == "AbsController"
             Pchargers = controller.update(Ptrafo, Pchargers); % EV-PV, vector of chargers
         elseif controller_type == "GSController"
             p.updatePower(Pchargers);
