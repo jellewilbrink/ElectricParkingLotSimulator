@@ -30,7 +30,7 @@ fprintf("Finished simulations...\n")
 %% Plot results
 
 for i = 1
-    figure;
+    figure; hold on;
     plot(abs(i).time,abs(i).Pover_limit/1000);
     plot(fcfs(i).time,fcfs(i).Pover_limit/1000);
     plot(gs(i).time,gs(i).Pover_limit/1000);
