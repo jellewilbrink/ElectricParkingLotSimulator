@@ -10,7 +10,7 @@ tic
         Ptrafo_max = 100000; % Power limit of the trafo
         Prest =  80000;  % Restoration power for control
         Ptarget = Prest + (Ptrafo_max - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
-        GS_step = 0.05; % Stepsize to change phi in GridShield controller
+        GS_step = 0.01; % Stepsize to change phi in GridShield controller
         Pc_min = sweep_var; %7000; % Minimum charger power, If changed, also change in ParkingLot.m
         Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m
         NumChargers = 10; % Number of chargers.
@@ -93,7 +93,7 @@ tic
             Pchargers = controller.update(Ptrafo, Pchargers); % EV-PV, vector of chargers
         elseif controller_type == "GSController"
             p.updatePower(Pchargers);
-            [phi, Pchargers] = controller.update(Ptrafo, [p.chargers(:).pmax]);
+            [phi, Pchargers] = controller.update(Ptrafo, Pc_max);	% [p.chargers(:).pmax] Was first instead of Pc_max
             phi_history = [phi_history phi];
             p.updatePower(Pchargers);
         elseif controller_type == "FCFSController"
