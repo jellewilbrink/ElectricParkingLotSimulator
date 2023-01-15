@@ -22,11 +22,11 @@ classdef GSController < handle
            obj.N=N;
         end
 
-        function [phi, Pchargers] = update(obj, Ptrafo, Pmax_chargers)
+        function [phi, Pchargers] = update(obj, Ptrafo, Pmax_charger)
             % update: update the GridShield controller state.
             % Input:
             %   Ptrafo: current power of the transformer in W
-            %   Pmax_chargers: 1D vector with maximum power (i.e. limit) for each vector
+            %   Pmax_charger: maximum power (i.e. limit) of the charger
             % Output:
             %   Pchargers: array of the maximum allowed power for each
             %   charger, based on the control algorithm
@@ -40,7 +40,7 @@ classdef GSController < handle
             
             phi = obj.phi;
 
-            Pchargers = ones(1,obj.N)*obj.phi .* Pmax_chargers;
+            Pchargers = ones(1,obj.N)*obj.phi .* Pmax_charger;
         end
     end
 end
