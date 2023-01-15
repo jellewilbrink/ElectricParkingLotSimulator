@@ -28,7 +28,7 @@ classdef AbsControl < handle
             %	Pchargers = The power for each charger. This is an N-length vector, because
             %	in FCFS chargers will get different power.
     
-            if (Ptrafo >= obj.Pmax) && (Ptrafo < obj.Prest)
+            if (Ptrafo >= obj.Pmax) || (Ptrafo < obj.Prest)
 	            % If all chargers will use Pev than the Ptarget will be reached 
 	            Pchargers = Pchargers + (obj.Ptarget - Ptrafo)/obj.N;		
             end
