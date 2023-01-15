@@ -8,10 +8,11 @@ tic
         % and changing them is less interesting for the purpose of
         % analyzing the controllers.
         Ptrafo_max = 100000; % Power limit of the trafo
-        Prest =  80000;  % Restoration power for control
+        Prest_gs = 80000; % Restoration power for absolute control
+        Prest =  95000;  % Restoration power for absolute control
         Ptarget = Prest + (Ptrafo_max - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
-        GS_step = 0.01; % Stepsize to change phi in GridShield controller
-        Pc_min = sweep_var; %7000; % Minimum charger power, If changed, also change in ParkingLot.m
+        GS_step = 0.03; % Stepsize to change phi in GridShield controller
+        Pc_min = 7000; % Minimum charger power, If changed, also change in ParkingLot.m
         Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m
         NumChargers = 10; % Number of chargers.
 
@@ -24,10 +25,10 @@ tic
 %             Power = AbsControl(1000,900,100, 10);
         elseif controller_type == "GSController"
 %             Pmax, Prest, step_size, N
-            controller = GSController(Ptrafo_max,Prest, GS_step, NumChargers);
+            controller = GSController(Ptrafo_max,Prest_gs, GS_step, NumChargers);
         elseif controller_type == "FCFSController"
 %             Pmax, Pcharge_min, Pcharge_max
-            controller = FCFSController(Ptrafo_max, Pc_min, Pc_max); % FIXME: Not sure about Ptarget here...
+            controller = FCFSController(Ptrafo_max, Pc_min, Pc_max);
         elseif controller_type ~= "None"
             ME = MException('InputError:Controller', ...
             'An invalid controller called %s was given... Please input a valid controller.', controller_type);
@@ -91,8 +92,8 @@ tic
         Ptrafo = p.trafo.power;
         if controller_type == "AbsController"
             Pchargers = controller.update(Ptrafo, Pchargers); % EV-PV, vector of chargers
-        elseif controller_type == "GSController"
             p.updatePower(Pchargers);
+        elseif controller_type == "GSController"
             [phi, Pchargers] = controller.update(Ptrafo, Pc_max);	% [p.chargers(:).pmax] Was first instead of Pc_max
             phi_history = [phi_history phi];
             p.updatePower(Pchargers);
