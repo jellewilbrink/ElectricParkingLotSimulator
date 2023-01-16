@@ -72,6 +72,12 @@ classdef EV < handle
         function setTime(obj, time)
             obj.time = time;
         end
+        
+        function P = ENS(obj)
+            % Return Energy Not Served in Wh
+            P = min(obj.capacity - obj.sum_of_charge, ...
+                obj.initial_charge + obj.desired_charge - obj.sum_of_charge);
+        end
     end
 end
 
