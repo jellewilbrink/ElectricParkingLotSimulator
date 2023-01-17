@@ -5,7 +5,7 @@
 % disable annoying warning
 warning('off', 'MATLAB:table:ModifiedAndSavedVarnames')
 
-sweep = [0.05];
+sweep = [42];
 for j = 1:numel(sweep)
     sweep_var = sweep(j);
     fprintf("Sweep cycle %d of %d. Sweep_var = %f \n", j, numel(sweep), sweep_var)
