@@ -50,3 +50,8 @@ for i = 1
     xlabel("Time");
     ylim([-25 inf])
 end
+
+% % Save in good resolution
+% pause(0.1)
+% exportgraphics(gcf,"./output/Ptrafo.pdf","Resolution",300); 
+% close(gcf);
