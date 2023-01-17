@@ -31,10 +31,16 @@ fprintf("Finished simulations...\n")
 
 
 %% Plot results
-
+param = "Ptotal";
 for i = 1
     figure; hold on;
-    plot(abs(i).time,abs(i).Pover_limit/1000);
-    plot(fcfs(i).time,fcfs(i).Pover_limit/1000);
-    plot(gs(i).time,gs(i).Pover_limit/1000);
+    plot(abs(i).time, get(abs(i),param)/1000);
+    plot(fcfs(i).time,get(fcfs(i),param)/1000);
+    plot(gs(i).time,get(gs(i),param)/1000);
+    plot(noCont(i).time,get(noCont(i),param)/1000);
 end
+
+title(param);
+legend("Absolute", "FCFS", "GridShield");
+ylabel("Power (kW)");
+xlabel("Time");

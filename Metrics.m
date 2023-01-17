@@ -1,4 +1,4 @@
-classdef Metrics
+classdef Metrics < matlab.mixin.SetGet
 	%METRICS Class to calculate and save metrics
 	%   Detailed explanation goes here
 
