@@ -44,13 +44,13 @@ for i = 1
 
     yline(100,'-',{"Transformer", "Limit"});
 
-    title(param);
+    title("P_{trafo}");
     legend("Absolute", "FCFS", "GridShield");
     ylabel("Power (kW)");
     xlabel("Time");
     ylim([-25 inf])
+    xlim([datetime(2021,6,1,6,0,0) datetime(2021,6,1,18,0,0)])
 end
-
 % % Save in good resolution
 % pause(0.1)
 % exportgraphics(gcf,"./output/Ptrafo.pdf","Resolution",300); 
