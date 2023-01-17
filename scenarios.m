@@ -19,6 +19,9 @@ for j = 1:numel(sweep)
     
     fprintf("Starting FCFSController... ")
     fcfs(j) = simulator("FCFSController", sweep_var);
+    
+    fprintf("Starting without controller...")
+    noCont(j) = simulator("None", sweep_var);
 end
 
 fprintf("Finished simulations...\n")

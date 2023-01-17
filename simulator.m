@@ -7,9 +7,12 @@ tic
         % chosen to leave them there, because they can be configured once 
         % and changing them is less interesting for the purpose of
         % analyzing the controllers.
-        Ptrafo_max = 100000; % Power limit of the trafo
-        Prest_gs = 80000; % Restoration power for absolute control
-        Prest =  95000;  % Restoration power for absolute control
+%         Ptrafo_max = 100000; % Power limit of the trafo
+%         Prest_gs = 80000; % Restoration power for absolute control
+%         Prest =  95000;  % Restoration power for absolute control
+        Ptrafo_max = 100000;
+        Prest_gs = 80000;
+        Prest = 95000;
         Ptarget = Prest + (Ptrafo_max - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
         GS_step = 0.03; % Stepsize to change phi in GridShield controller
         Pc_min = 7000; % Minimum charger power, If changed, also change in ParkingLot.m
@@ -116,6 +119,11 @@ tic
 		M.Pchargers = p.test;
         
     end
+    ENS = [];
+    for i = 1:NumChargers
+        ENS = [ENS p.chargers(1,i).ENS_EV];
+    end
+    M.ENS = ENS;
     M = M.compute;	% Compute all the metrics over the whole time frame
 
 %     plot(time_history, trafo_history)

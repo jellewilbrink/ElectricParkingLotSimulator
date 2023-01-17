@@ -16,6 +16,7 @@ classdef Metrics
 		time		% simulation time
 		PVdata		% power of PV on each time interval
 		Pchargers	% output power at each charger on each time interval
+        ENS         % energy not served of all the EVs
 	end
 
 	methods
@@ -59,6 +60,12 @@ classdef Metrics
 			obj.E_from_grid = sum(obj.Ptotal(obj.Ptotal>0))* obj.stepSize;		% Using the grid to charge EVs
 			obj.E_to_grid = sum(obj.Ptotal(obj.Ptotal<0)) * obj.stepSize;		% Over production of PVs is send to grid
 
-		end
+        end
+        
+        function obj = set.ENS(obj, ENS)
+            for i=1:width(ENS)
+                obj.ENS(i) = ENS(i);
+            end
+        end
 	end
 end

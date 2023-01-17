@@ -13,6 +13,7 @@ classdef charger < handle
         pcontrolled {mustBeNumeric}
         p {mustBeNumeric}
         pmax {mustBeNumeric}
+        ENS_EV {mustBeNumeric}
     end
     
     methods
@@ -68,6 +69,7 @@ classdef charger < handle
                 if ~obj.ev.leave()
                     result = 1; 
                 else
+                    obj.ENS_EV = obj.ev.ENS();
                     delete(obj.ev);
                     result = 0;
                 end
