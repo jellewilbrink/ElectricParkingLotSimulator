@@ -10,13 +10,13 @@ tic
 %         Ptrafo_max = 100000; % Power limit of the trafo
 %         Prest_gs = 80000; % Restoration power for absolute control
 %         Prest =  95000;  % Restoration power for absolute control
-        Ptrafo_max = 100000;
-        Prest_gs = 80000;
-        Prest = 95000;
+        Ptrafo_max = sweep_var;
+        Prest_gs = sweep_var * 0.8;
+        Prest = sweep_var * 0.95;
         Ptarget = Prest + (Ptrafo_max - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
         GS_step = 0.03; % Stepsize to change phi in GridShield controller
-        Pc_min = 7000; % Minimum charger power, If changed, also change in ParkingLot.m
-        Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m
+        Pc_min = 1380; % Minimum charger power, If changed, also change in ParkingLot.m, normal 7kW
+        Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m, normal 22kW
         NumChargers = 10; % Number of chargers.
 
         PV_file = 'data/solarPanelOutputDataSlimPark-1day.csv'; % Path to file containing PV data
@@ -41,8 +41,8 @@ tic
 	M = Metrics(1, Ptrafo_max);
 %% add DriveEV and ParkingLot instances
    
-    dEV = DriveEV(EV_file);
-    p = ParkingLot(Ptarget, PV_file, 10);
+    dEV = DriveEV(EV_file, Pc_min, Pc_max);
+    p = ParkingLot(Ptarget, PV_file, NumChargers, Pc_min, Pc_max);
     p.set_chargers(Pc_max,Pc_max,Pc_min,NumChargers);
 
     opts = detectImportOptions(PV_file);

@@ -5,6 +5,8 @@ classdef ParkingLot < handle
         chargers
         pv
         test
+        P_min
+        P_max
     end
 
     properties(Access=private)
@@ -12,12 +14,13 @@ classdef ParkingLot < handle
     end
 
     methods
-        function obj = ParkingLot(trafo_pmax, csv_pv, num_chargers)
+        function obj = ParkingLot(trafo_pmax, csv_pv, num_chargers, P_min, P_max)
             obj.trafo = Transformer(trafo_pmax, 0);
             obj.pv = PV(csv_pv);         
-
+            obj.P_min = P_min;
+            obj.P_max = P_max;
             % Initialize chargers with default values
-            obj.set_chargers(22000,22000,7000,num_chargers)
+            obj.set_chargers(P_max,P_max,P_min,num_chargers)
         end
 
         function advance_time_to(obj, t)
@@ -40,7 +43,7 @@ classdef ParkingLot < handle
             % Initialize num_chargers chargers all with the same parameters
 
             % Create 'empty'charger array
-            obj.chargers= [charger(22000,22000,7000,[]) charger(22000,22000,7000,[])];
+            obj.chargers= [charger(obj.P_max,obj.P_max,obj.P_min,[]) charger(obj.P_max,obj.P_max,obj.P_min,[])];
 
             % Fill with values and increase array length if needed
             for i = 1:num_chargers

@@ -4,10 +4,12 @@ classdef DriveEV < handle
     properties(Access=private)
         ev_table % Table containing EV charging data
         t= timeofday(datetime("yesterday")) % Current simulation time. Initially 00:00:00
+        P_min
+        P_max
     end
 
     methods
-        function obj = DriveEV(csv_in)
+        function obj = DriveEV(csv_in, P_min, P_max)
             % Create PV object
             % INPUT:
             %    csv_in: path to csv file containing at least "EV_id",
@@ -20,6 +22,9 @@ classdef DriveEV < handle
 
             obj.ev_table.t_arrival = timeofday(datetime(obj.ev_table.arrival, "Format","uuuu-MM-dd HH:mm:ss"));
             obj.ev_table.t_departure = timeofday(datetime(obj.ev_table.departure, "Format","uuuu-MM-dd HH:mm:ss"));
+            
+            obj.P_min = P_min;
+            obj.P_max = P_max;
         end
 
         function arrived_EVs = advance_time_to(obj, t)
@@ -43,7 +48,7 @@ classdef DriveEV < handle
             end
             for row = 1:rows
                     arrived_EVs_table(row,"total_energy");
-                arrived_EVs(row) = EV(22000,75000,1500,arrived_EVs_table{row,"t_arrival"},arrived_EVs_table{row,"t_departure"},arrived_EVs_table{row,"total_energy"}*1000);
+                arrived_EVs(row) = EV(obj.P_max,obj.P_max,obj.P_min,arrived_EVs_table{row,"t_arrival"},arrived_EVs_table{row,"t_departure"},arrived_EVs_table{row,"total_energy"}*1000);
             end
 
             % Update the time
