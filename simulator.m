@@ -21,7 +21,7 @@ tic
 
         PV_file = 'data/solarPanelOutputDataSlimPark-1day.csv'; % Path to file containing PV data
         EV_file = 'data/BetterCars.csv'; % Path to file containing EV data
-        end_time = duration("21:00:00");
+        end_time = duration("18:00:00");
 %% create controller
         if controller_type == "AbsController"
             controller = AbsControl(Ptrafo_max,Ptarget,Prest, NumChargers);
@@ -81,6 +81,7 @@ tic
                 rip = 0;
             end
         end
+        
 %% get charger data
         Pchargers = [];
         for j = 1:NumChargers

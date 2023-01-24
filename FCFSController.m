@@ -30,10 +30,12 @@ classdef FCFSController < handle
             % Update step
 			delta = Ptrafo - obj.Pmax;
 
+            idx_charging = find(Pchargers > 1);
+
             % Update charger power 
 			% (ATM only possible to give Pcharge_min as mininum and not 0)
 		    if delta > 0		% The trafo is going over limit, so we should charge less 
-				for i = 1:numel(Pchargers)        
+				for i = flip(idx_charging)        
                 	if Pchargers(i) >= obj.Pcharge_min + delta
                     	Pchargers(i) = Pchargers(i) - delta;
                     	delta = 0;
@@ -53,7 +55,7 @@ classdef FCFSController < handle
 %                	end
 %				end
 			elseif delta < 0	% The EVs can be charged with more power
-				for i = numel(Pchargers):-1:1    % The EV that arrived first gets it P increased first       
+				for i = idx_charging    % The EV that arrived first gets it P increased first       
                 	if Pchargers(i) <=  delta + obj.Pcharge_max
                     	Pchargers(i) = Pchargers(i) - delta;
                     	delta = 0;

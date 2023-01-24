@@ -1,11 +1,11 @@
 % Clean up workspace
-% clear variables
-% close all
+clear variables
+close all
 
 % disable annoying warning
 warning('off', 'MATLAB:table:ModifiedAndSavedVarnames')
 
-sweep = [50000];
+sweep = [50000 100000];
 for j = 1:numel(sweep)
     sweep_var = sweep(j);
     fprintf("Sweep cycle %d of %d. Sweep_var = %f \n", j, numel(sweep), sweep_var)
@@ -33,7 +33,6 @@ fprintf("Finished simulations...\n")
 %% Plot results
 param = "Ptotal";
 
-
 for i = 1
     figure; hold on;
     
@@ -45,7 +44,7 @@ for i = 1
     yline(100,'-',{"Transformer", "Limit"});
 
     title("P_{trafo}");
-    legend("Absolute", "FCFS", "GridShield");
+    legend("Absolute", "FCFS", "GridShield", "No controller");
     ylabel("Power (kW)");
     xlabel("Time");
     ylim([-25 inf])
@@ -55,3 +54,14 @@ end
 % pause(0.1)
 % exportgraphics(gcf,"./output/Ptrafo.pdf","Resolution",300); 
 % close(gcf);
+
+%% Make metrics table
+% params = ["Pover_limit_quadratic", "Tover_limit"];
+% t=zeros(0,4);
+% i=1;
+% for j = 1:length(params)
+%     [get(abs(i),params(j)), get(fcfs(i),params(j)), get(gs(i),params(j))]
+% end
+% [max(get(abs(i),"ENS")), max(get(fcfs(i),"ENS")), max(get(gs(i),"ENS")),max(get(noCont(i),"ENS"))]
+
+
