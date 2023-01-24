@@ -11,7 +11,7 @@ tic
 %         Prest_gs = 80000; % Restoration power for absolute control
 %         Prest =  95000;  % Restoration power for absolute control
         Ptrafo_max = sweep_var;
-        Prest_gs = sweep_var * 0.8;
+        Prest_gs = sweep_var * 0.95;
         Prest = sweep_var * 0.95;
         Ptarget = Prest + (Ptrafo_max - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
         GS_step = 0.015; % Stepsize to change phi in GridShield controller. Original 0.03
