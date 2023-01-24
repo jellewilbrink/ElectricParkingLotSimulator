@@ -48,7 +48,7 @@ classdef DriveEV < handle
             end
             for row = 1:rows
                     arrived_EVs_table(row,"total_energy");
-                arrived_EVs(row) = EV(obj.P_max,obj.P_max,obj.P_min,arrived_EVs_table{row,"t_arrival"},arrived_EVs_table{row,"t_departure"},arrived_EVs_table{row,"total_energy"}*1000);
+                arrived_EVs(row) = EV(obj.P_max,75000,1500,arrived_EVs_table{row,"t_arrival"},arrived_EVs_table{row,"t_departure"},arrived_EVs_table{row,"total_energy"}*1000);
             end
 
             % Update the time

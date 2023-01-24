@@ -5,7 +5,7 @@
 % disable annoying warning
 warning('off', 'MATLAB:table:ModifiedAndSavedVarnames')
 
-sweep = [10000,15000];
+sweep = [50000];
 for j = 1:numel(sweep)
     sweep_var = sweep(j);
     fprintf("Sweep cycle %d of %d. Sweep_var = %f \n", j, numel(sweep), sweep_var)
@@ -25,7 +25,7 @@ for j = 1:numel(sweep)
 end
 
 fprintf("Finished simulations...\n")
-
+ 
 
 %% Choose stepsize value by sweeping
 

@@ -14,7 +14,7 @@ tic
         Prest_gs = sweep_var * 0.8;
         Prest = sweep_var * 0.95;
         Ptarget = Prest + (Ptrafo_max - Prest)/2; % Target power for Aim at the middle between Ptrafo and Prest
-        GS_step = 0.03; % Stepsize to change phi in GridShield controller
+        GS_step = 0.015; % Stepsize to change phi in GridShield controller. Original 0.03
         Pc_min = 1380; % Minimum charger power, If changed, also change in ParkingLot.m, normal 7kW
         Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m, normal 22kW
         NumChargers = 10; % Number of chargers.
