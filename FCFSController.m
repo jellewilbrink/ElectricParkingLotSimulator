@@ -31,7 +31,7 @@ classdef FCFSController < handle
 			delta = Ptrafo - obj.Pmax;
 
             % Update charger power 
-			% (ATM only possible to give chargers less power and not more)
+			% (ATM only possible to give Pcharge_min as mininum and not 0)
 		    if delta > 0		% The trafo is going over limit, so we should charge less 
 				for i = 1:numel(Pchargers)        
                 	if Pchargers(i) >= obj.Pcharge_min + delta
@@ -43,7 +43,7 @@ classdef FCFSController < handle
                     	Pchargers(i) = obj.Pcharge_min;
                 	end
 				end
-% Commented code is for when you want to be able to charge below Pcharge_min				
+% Commented code is for when you want to be able to charge below Pcharge_min (does not work)				
 %				for i = 1:numel(Pchargers)	%lower to zero if lowering to minimum is not enough 
 %                	if delta < 0
 %						break
