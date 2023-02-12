@@ -19,8 +19,8 @@ tic
         Pc_max = 22000;% Maximum charger power, If changed, also change in ParkingLot.m and in DriveEV.m, normal 22kW
         NumChargers = 10; % Number of chargers.
 
-        PV_file = 'data/solarPanelOutputDataSlimPark-1day.csv'; % Path to file containing PV data
-        EV_file = 'data/BetterCars.csv'; % Path to file containing EV data
+        PV_file = ""; % Path to file containing PV data (e.g. csv)
+        EV_file = ""; % Path to file containing EV data (e.g. csv)
         end_time = duration("18:00:00");
 %% create controller
         if controller_type == "AbsController"

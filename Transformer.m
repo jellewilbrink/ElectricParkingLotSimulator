@@ -1,5 +1,4 @@
 classdef Transformer < handle
-    %UNTITLED Summary of this class goes here
     %   This class represents the transformer with all of its variables 
     %   and functions 
     
