@@ -2,7 +2,7 @@
 Simulator for a parkinglot with EV chargers, PV generation and a transformer.
 This simulator was made as part of a project for the DEMS course at University of Twente.
 
-![diagram of parkinglot](doc/system_diagram.drawio.png)
+![diagram of parkinglot](doc/system_diagram.png)
 
 ## Usage
 Before running a simulation, add files with input data for the EVs and PV generation.
